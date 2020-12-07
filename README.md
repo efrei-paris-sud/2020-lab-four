@@ -154,9 +154,14 @@ Since ThingSpeak supports up to 8 data fields, you might want to send more than 
 ### **Read Value** 
 - Please see the   `ReadField` example. It is Reading from a public channel and a private channel on ThingSpeak.
 
+|Ex.3| Build circuit of [Step 6 in Lab1](https://github.com/efrei-paris-sud/2020-lab-one#step-6-read-an-analog-value). Send its data to thingspeak dashboard! Take a photo of the dashboard|
+---|---
+
 
 # Advanced Topic (for those want to change a value from dashboard)
 create your own plugin to change the LED state.
+
+![Pure CSS3 iOS switch checkbox. A switch allows the user to quickly… | by  Pedro M. S. Duarte | codeburst](https://miro.medium.com/max/403/1*PjHEsBxh7B9BrYARqHcujQ.jpeg)
 
 Go to thingspeak dashboard-> App-> plugin -> new
 
