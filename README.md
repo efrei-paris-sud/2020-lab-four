@@ -151,8 +151,126 @@ The WriteSingleField Arduino sketch example reads an analog voltage from pin 0, 
 
 Since ThingSpeak supports up to 8 data fields, you might want to send more than one value to ThingSpeak. To send multiple value to ThingSpeak from an Arduino, you use _ThingSpeak.setField(#,value)_ for each value to send and then use _ThingSpeak.writeFields(myChannelNumber, myWriteAPIKey)_ to send everything to ThingSpeak. Use the WriteMultipleFields Arduino sketch example to send multiple pin voltages to ThingSpeak.
 
-### -   **Read Value** 
+### **Read Value** 
 - Please see the   `ReadField` example. It is Reading from a public channel and a private channel on ThingSpeak.
 
 
+# Advanced Topic (for those want to change a value from dashboard)
+create your own plugin to change the LED state.
 
+Go to thingspeak dashboard-> App-> plugin -> new
+
+## put these codes into the boxes
+> don't forget to change ,`led_field`, `readapikey` and `write api key` in the js
+
+#### HTML
+```html
+<html>
+  <head>
+
+  <!-- 
+  
+  NOTE: This plugin will not be visible on public views of a channel. 
+        If you intend to make your channel public, consider using the
+        MATLAB Visualization App to create your visualizations.
+  
+  -->  
+  
+  <title>Google Gauge - ThingSpeak</title>
+
+  %%PLUGIN_CSS%%
+  %%PLUGIN_JAVASCRIPT%%
+
+  </head>
+
+  <body>
+    <div id="container">
+      <div id="inner">
+        <div id="gauge_div"></div>
+      </div>
+    </div>
+  </body>
+</html>
+```
+#### CSS
+```css
+<style type="text/css">
+  body { background-color: #ddd; }
+  #container { height: 100%; width: 100%; display: table; }
+  #inner { vertical-align: middle; display: table-cell; }
+  #gauge_div { width: 120px; margin: 0 auto; }
+</style>
+
+
+```
+#### JS
+```js
+<script type='text/javascript' src='https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js'></script>
+<script type='text/javascript' src='https://www.google.com/jsapi'></script>
+<script type='text/javascript'>
+
+  // set your channel id here
+  var channel_id = 9;
+  // set your channel's read api key here if necessary
+  var api_key = '';
+  // maximum value for the gauge
+  var max_gauge_value = 1023;
+  // name of the gauge
+  var gauge_name = 'Light Level';
+
+  // global variables
+  var chart, charts, data;
+
+  // load the google gauge visualization
+  google.load('visualization', '1', {packages:['gauge']});
+  google.setOnLoadCallback(initChart);
+
+  // display the data
+  function displayData(point) {
+    data.setValue(0, 0, gauge_name);
+    data.setValue(0, 1, point);
+    chart.draw(data, options);
+  }
+
+  // load the data
+  function loadData() {
+    // variable for the data point
+    var p;
+
+    // get the data from thingspeak
+    $.getJSON('https://api.thingspeak.com/channels/' + channel_id + '/feed/last.json?api_key=' + api_key, function(data) {
+
+      // get the data point
+      p = data.field1;
+
+      // if there is a data point display it
+      if (p) {
+        p = Math.round((p / max_gauge_value) * 100);
+        displayData(p);
+      }
+
+    });
+  }
+
+  // initialize the chart
+  function initChart() {
+
+    data = new google.visualization.DataTable();
+    data.addColumn('string', 'Label');
+    data.addColumn('number', 'Value');
+    data.addRows(1);
+
+    chart = new google.visualization.Gauge(document.getElementById('gauge_div'));
+    options = {width: 120, height: 120, redFrom: 90, redTo: 100, yellowFrom:75, yellowTo: 90, minorTicks: 5};
+
+    loadData();
+
+    // load new data every 15 seconds
+    setInterval('loadData()', 15000);
+  }
+
+</script>
+
+
+```
+### Add the plugin to your dashboard. is it working?
