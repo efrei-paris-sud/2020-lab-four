@@ -2,6 +2,9 @@
 To communicate with other devices we need to use a board that has WiFi, Bluetooth or etc. 
 Therefore we will use ESP 32 board which is suitable for this usage.
 
+We want to provide a IoT dashboard for our Green House!!!
+![](https://www.senseye.io/hs-fs/hub/533282/file-3715982174-png/blog-files/dashboard-1.png?width=753&height=561&name=dashboard-1.png)
+
 # Step 1: Installing ESP32 Add-on in Arduino IDE
 Please follow this [link](https://randomnerdtutorials.com/installing-the-esp32-board-in-arduino-ide-windows-instructions/).
 
@@ -107,3 +110,49 @@ void disconnect(){
 ## [More info Json, HTTP Get, HTTP Post, HTTPS (optional)](more.md)
 
 # Thingspeak platform
+
+
+### **ThingSpeak Setup for ESP32**
+
+ThingSpeak is a free web service which helps us in IoT based projects. By using ThingSpeak server, we can monitor our data over the internet using the API and channels provided by ThingSpeak. In this section I am explaining about  **how to send sensor data of ESP32 to ThingSpeak server**. For this you have to follow following steps:
+
+1.  Firstly go to  [https://thingspeak.com/](https://thingspeak.com/)  and create an account and sign in to this server.
+
+2.  After signing in you will find below window in which number of channels are listed in this go to  _New channel_.
+
+![ ThingSpeak Setup for ESP32](https://iotdesignpro.com/sites/default/files/inline-images/ThingSpeak-Setup-for-ESP32.png)
+
+3.  After clicking on  _New Channel_  you will find a window in which you have to enter some details about the channel, in this project we want to analyze temperature and Hall sensor value of ESP32 so you will require 2 fields. So enter the details as shown and save the channel.
+
+![ Start New Channel on ThingSpeak for ESP32](https://iotdesignpro.com/sites/default/files/inline-images/Start-New-Channel-on-ThingSpeak-for-ESP32.png)
+
+4.  After saving of channel you will find channel stats window showing details about your channels.
+
+![ Graphical Representation on ThingSpeak for ESp32](https://iotdesignpro.com/sites/default/files/inline-images/Graphical-Representation-on-ThingSpeak-for-ESp32.png)
+
+5.  Now go to API key menu which shows you  **Write API keys and Read API key**, Copy Write API key as you will required this API during programming of ESP32.
+
+![ Getting API Key from ThingSpeak for ESp32](https://iotdesignpro.com/sites/default/files/inline-images/Getting-API-Key-from-ThingSpeak-for-ESp32.png)
+
+
+### Install ThingSpeak Communication Library for Arduino
+In the Arduino IDE, choose Sketch/Include Library/Manage Libraries. Click the ThingSpeak Library from the list, and click the Install button.
+[![Example Video of the porject](https://img.youtube.com/vi/w73kv6x05NE/0.jpg)](https://www.youtube.com/watch?v=w73kv6x05NE)
+
+### Setup Arduino Sketch
+
+We have provided a few Arduino sketch [examples](https://github.com/mathworks/thingspeak-arduino/tree/master/examples/ESP32)  with the ThingSpeak library. They are designed to work right away with no changes. To make the examples work with your ThingSpeak channel, you will need to configure the _myChannelNumber_  and  _myWriteAPIKey_ variables.
+
+### Send an Analog Voltage to ThingSpeak
+
+The WriteSingleField Arduino sketch example reads an analog voltage from pin 0, and writes it to a channel on ThingSpeak every 20 seconds. Load the example in the Arduino IDE. Make sure to select the correct Arduino board and COM port. Then, upload the code to your Arduino.
+
+### Sending Multiple Values to ThingSpeak
+
+Since ThingSpeak supports up to 8 data fields, you might want to send more than one value to ThingSpeak. To send multiple value to ThingSpeak from an Arduino, you use _ThingSpeak.setField(#,value)_ for each value to send and then use _ThingSpeak.writeFields(myChannelNumber, myWriteAPIKey)_ to send everything to ThingSpeak. Use the WriteMultipleFields Arduino sketch example to send multiple pin voltages to ThingSpeak.
+
+### -   **Read Value** 
+- Please see the   `ReadField` example. It is Reading from a public channel and a private channel on ThingSpeak.
+
+
+
