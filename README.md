@@ -164,113 +164,79 @@ Go to thingspeak dashboard-> App-> plugin -> new
 > don't forget to change ,`led_field`, `readapikey` and `write api key` in the js
 
 #### HTML
-```html
-<html>
-  <head>
-
-  <!-- 
-  
-  NOTE: This plugin will not be visible on public views of a channel. 
-        If you intend to make your channel public, consider using the
-        MATLAB Visualization App to create your visualizations.
-  
-  -->  
-  
-  <title>Google Gauge - ThingSpeak</title>
+```html<html>
+<head>
 
   %%PLUGIN_CSS%%
   %%PLUGIN_JAVASCRIPT%%
-
-  </head>
-
-  <body>
-    <div id="container">
-      <div id="inner">
-        <div id="gauge_div"></div>
-      </div>
+  
+</head>
+<body>
+  
+   <div class="pretty p-switch">
+        <input type="checkbox" id="myCheck" onclick="myFunction()">
+        <div class="state">
+            <label>LED 1</label>
+        </div>
     </div>
-  </body>
+
+</body>
 </html>
+
 ```
 #### CSS
 ```css
 <style type="text/css">
-  body { background-color: #ddd; }
-  #container { height: 100%; width: 100%; display: table; }
-  #inner { vertical-align: middle; display: table-cell; }
-  #gauge_div { width: 120px; margin: 0 auto; }
+  body { background-color: #fff; }
 </style>
-
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretty-checkbox@3.0/dist/pretty-checkbox.min.css" />
+    
 
 ```
 #### JS
 ```js
 <script type='text/javascript' src='https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js'></script>
-<script type='text/javascript' src='https://www.google.com/jsapi'></script>
-<script type='text/javascript'>
 
+
+<script type="text/javascript">
   // set your channel id here
-  var channel_id = 9;
-  // set your channel's read api key here if necessary
-  var api_key = '';
-  // maximum value for the gauge
-  var max_gauge_value = 1023;
-  // name of the gauge
-  var gauge_name = 'Light Level';
+  var channel_id = 1250634;
+  var read_api_key = 'L7K0BVNWS2FFV3UG';
+  var write_api_key = 'PPXSCLNQXIOJ2HCR';
+  
+  temp_field=1
+  led_field=2
+   
+  function myFunction() {
+  // Get the checkbox
+    var checkBoxVal = $("#myCheck").is(":checked")
+  // Write On channel
+    $.getJSON('https://api.thingspeak.com/update?api_key=' + write_api_key+"&field"+led_field+"="+(checkBoxVal?1:0), function(data) {
+      if(data==0){
+        alert("fast toggle");
+        return;
+      }
+      
+    });
 
-  // global variables
-  var chart, charts, data;
 
-  // load the google gauge visualization
-  google.load('visualization', '1', {packages:['gauge']});
-  google.setOnLoadCallback(initChart);
-
-  // display the data
-  function displayData(point) {
-    data.setValue(0, 0, gauge_name);
-    data.setValue(0, 1, point);
-    chart.draw(data, options);
   }
-
-  // load the data
-  function loadData() {
-    // variable for the data point
-    var p;
-
-    // get the data from thingspeak
-    $.getJSON('https://api.thingspeak.com/channels/' + channel_id + '/feed/last.json?api_key=' + api_key, function(data) {
-
+  
+  function updateStat(){
+  $.getJSON('https://api.thingspeak.com/channels/' + channel_id + '/feed/last.json?api_key=' + read_api_key, function(data) {
       // get the data point
-      p = data.field1;
-
+      p = data['field'+led_field];
       // if there is a data point display it
       if (p) {
-        p = Math.round((p / max_gauge_value) * 100);
-        displayData(p);
+        $("#myCheck").prop('checked',p==1);
       }
-
     });
   }
+  
+  $( document ).ready(function(){
+  setInterval(updateStat,1000);
 
-  // initialize the chart
-  function initChart() {
-
-    data = new google.visualization.DataTable();
-    data.addColumn('string', 'Label');
-    data.addColumn('number', 'Value');
-    data.addRows(1);
-
-    chart = new google.visualization.Gauge(document.getElementById('gauge_div'));
-    options = {width: 120, height: 120, redFrom: 90, redTo: 100, yellowFrom:75, yellowTo: 90, minorTicks: 5};
-
-    loadData();
-
-    // load new data every 15 seconds
-    setInterval('loadData()', 15000);
-  }
-
+  });
 </script>
-
-
 ```
 ### Add the plugin to your dashboard. is it working?
